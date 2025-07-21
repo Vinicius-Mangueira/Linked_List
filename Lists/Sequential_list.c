@@ -27,6 +27,12 @@ int size(Sequentialist *List) {
     return List->current_size;
 }
 
+// 5.Get/modify the value of the element at a given position in the list;
+int get(Sequentialist * List, int position){
+    if((position > List -> current_size) || (position <= 0)) return -1;
+    return List->data[position - 1];
+}
+
 // 6.Insert an element at a specific position;
 int insert(Sequentialist *List, int position, int value) {
     if(full(List) || position > List->current_size || position < 0)
