@@ -11,6 +11,7 @@ This repo contains two C implementations of fundamental list data structures, ea
 
 ## 📂 Repository Structure
 
+```
 
 .
 ├── Liked\_List
