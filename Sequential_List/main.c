@@ -1,23 +1,30 @@
 #include <stdio.h>
-#include "list.h"
+#include "sequential_list.h"
 
 int main() {
-    List l;
-    int value;
+    SeqList lst;
+    create_list(&lst);
+    printf("List created. Empty? %s\n", is_empty(&lst) ? "Yes" : "No");
 
-    create_list(&l);
-    insert_element(&l, 1, 10);
-    insert_element(&l, 2, 20);
-    insert_element(&l, 3, 30);
-    set_element(&l, 2, 25);
-    remove_element(&l, 1);
+    // Insert elements
+    insert_at(&lst, 1, 10);
+    insert_at(&lst, 2, 20);
+    insert_at(&lst, 3, 30);
+    insert_at(&lst, 2, 15);
+    printf("After insertions: "); print_list(&lst);
+    printf("Size: %d\n", get_size(&lst));
 
-    printf("List contents: ");
-    for (int i = 1; i <= get_size(&l); i++) {
-        get_element(&l, i, &value);
-        printf("%d ", value);
-    }
-    printf("\n");
+    // Access and modify
+    int val;
+    if (get_value(&lst, 3, &val) == 0) printf("Value at position 3: %d\n", val);
+    set_value(&lst, 3, 25);
+    printf("After set_value at pos 3 to 25: "); print_list(&lst);
+
+    // Remove elements
+    int rem;
+    remove_at(&lst, 1, &rem);
+    printf("Removed from pos 1: %d\n", rem);
+    printf("List now: "); print_list(&lst);
 
     return 0;
 }

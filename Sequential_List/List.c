@@ -1,48 +1,61 @@
-#include "list.h"
+#include <stdio.h>
+#include <string.h>
+#include "sequential_list.h"
 
-void create_list(List *l) {
-    l->size = 0;
+void create_list(SeqList* lst) {
+    lst->size = 0;
 }
 
-int is_empty(List *l) {
-    return l->size == 0;
+bool is_empty(const SeqList* lst) {
+    return (lst->size == 0);
 }
 
-int is_full(List *l) {
-    return l->size == MAX;
+bool is_full(const SeqList* lst) {
+    return (lst->size >= MAX_SIZE);
 }
 
-int get_size(List *l) {
-    return l->size;
+int get_size(const SeqList* lst) {
+    return lst->size;
 }
 
-int get_element(List *l, int pos, int *value) {
-    if (pos < 1 || pos > l->size) return 0;
-    *value = l->data[pos - 1];
-    return 1;
+int get_value(const SeqList* lst, int pos, int* out) {
+    if (pos < 1 || pos > lst->size) return -1;
+    *out = lst->data[pos - 1];
+    return 0;
 }
 
-int set_element(List *l, int pos, int new_value) {
-    if (pos < 1 || pos > l->size) return 0;
-    l->data[pos - 1] = new_value;
-    return 1;
+int set_value(SeqList* lst, int pos, int value) {
+    if (pos < 1 || pos > lst->size) return -1;
+    lst->data[pos - 1] = value;
+    return 0;
 }
 
-int insert_element(List *l, int pos, int value) {
-    if (is_full(l) || pos < 1 || pos > l->size + 1) return 0;
-    for (int i = l->size; i >= pos; i--) {
-        l->data[i] = l->data[i - 1];
+int insert_at(SeqList* lst, int pos, int value) {
+    if (is_full(lst) || pos < 1 || pos > lst->size + 1) return -1;
+    // Shift elements right
+    for (int i = lst->size; i >= pos; --i) {
+        lst->data[i] = lst->data[i - 1];
     }
-    l->data[pos - 1] = value;
-    l->size++;
-    return 1;
+    lst->data[pos - 1] = value;
+    lst->size++;
+    return 0;
 }
 
-int remove_element(List *l, int pos) {
-    if (is_empty(l) || pos < 1 || pos > l->size) return 0;
-    for (int i = pos - 1; i < l->size - 1; i++) {
-        l->data[i] = l->data[i + 1];
+int remove_at(SeqList* lst, int pos, int* out) {
+    if (is_empty(lst) || pos < 1 || pos > lst->size) return -1;
+    *out = lst->data[pos - 1];
+    // Shift elements left
+    for (int i = pos; i < lst->size; ++i) {
+        lst->data[i - 1] = lst->data[i];
     }
-    l->size--;
-    return 1;
+    lst->size--;
+    return 0;
+}
+
+void print_list(const SeqList* lst) {
+    printf("[ ");
+    for (int i = 0; i < lst->size; ++i) {
+        printf("%d ", lst->data[i]);
+    }
+    printf("]\n");
 }
