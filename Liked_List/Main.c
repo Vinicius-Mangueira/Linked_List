@@ -1,25 +1,31 @@
 #include <stdio.h>
-#include "list.h"
+#include "List.h"
 
 int main() {
-    List l;
-    int value;
+    List* lst = create_list();
+    printf("List created. Empty? %s\n", is_empty(lst) ? "Yes" : "No");
 
-    create_list(&l);
+    // Insert elements
+    insert_at(lst, 1, 10);
+    insert_at(lst, 2, 20);
+    insert_at(lst, 3, 30);
+    insert_at(lst, 2, 15);
+    printf("After insertions: "); print_list(lst);
+    printf("Size: %d\n", get_size(lst));
 
-    insert(&l, 1, 10);
-    insert(&l, 2, 20);
-    insert(&l, 3, 30);
-    set(&l, 2, 25);
-    remove_at(&l, 1);
-    get(&l, 2, &value);
+    // Access and modify
+    int val;
+    if (get_value(lst, 3, &val) == 0) printf("Value at position 3: %d\n", val);
+    set_value(lst, 3, 25);
+    printf("After set_value at pos 3 to 25: "); print_list(lst);
 
-    printf("List: ");
-    print(&l);
+    // Remove elements
+    int rem;
+    remove_at(lst, 1, &rem);
+    printf("Removed from pos 1: %d\n", rem);
+    printf("List now: "); print_list(lst);
 
-    printf("Element at pos 2: %d\n", value);
-    printf("Size: %d\n", get_size(&l));
-    printf("Is empty: %d\n", is_empty(&l));
-
+    // Cleanup
+    free_list(lst);
     return 0;
 }

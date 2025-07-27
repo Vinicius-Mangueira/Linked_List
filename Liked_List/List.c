@@ -1,85 +1,107 @@
+/* linked_list.c */
 #include <stdio.h>
 #include <stdlib.h>
-#include "list.h"
+#include "List.h"
 
-void create_list(List* l) {
-    l->head = NULL;
+// Create and initialize an empty list
+List* create_list() {
+    List* lst = malloc(sizeof(List));
+    if (!lst) return NULL;
+    lst->head = NULL;
+    lst->size = 0;
+    return lst;
 }
 
-int is_empty(List* l) {
-    return l->head == NULL;
+// Return true if the list has no elements
+bool is_empty(List* lst) {
+    return (lst->size == 0);
 }
 
-int get_size(List* l) {
-    int count = 0;
-    Node* p = l->head;
-    while (p) {
-        count++;
-        p = p->next;
+// Return the current number of elements
+int get_size(List* lst) {
+    return lst->size;
+}
+
+// Helper to find node at given 1-based position
+static Node* get_node(List* lst, int pos) {
+    if (pos < 1 || pos > lst->size) return NULL;
+    Node* cur = lst->head;
+    for (int i = 1; i < pos; ++i) {
+        cur = cur->next;
     }
-    return count;
+    return cur;
 }
 
-int get(List* l, int pos, int* value) {
-    if (pos < 1) return 0;
-    Node* p = l->head;
-    for (int i = 1; i < pos && p; i++)
-        p = p->next;
-    if (!p) return 0;
-    *value = p->value;
-    return 1;
+// Retrieve data at position
+int get_value(List* lst, int pos, int* out) {
+    Node* node = get_node(lst, pos);
+    if (!node) return -1;
+    *out = node->data;
+    return 0;
 }
 
-int set(List* l, int pos, int value) {
-    if (pos < 1) return 0;
-    Node* p = l->head;
-    for (int i = 1; i < pos && p; i++)
-        p = p->next;
-    if (!p) return 0;
-    p->value = value;
-    return 1;
+// Update data at position
+int set_value(List* lst, int pos, int value) {
+    Node* node = get_node(lst, pos);
+    if (!node) return -1;
+    node->data = value;
+    return 0;
 }
 
-int insert(List* l, int pos, int value) {
-    if (pos < 1 || pos > get_size(l) + 1) return 0;
-    Node* new_node = malloc(sizeof(Node));
-    if (!new_node) return 0;
-    new_node->value = value;
+// Insert a new node with given value at position
+int insert_at(List* lst, int pos, int value) {
+    if (pos < 1 || pos > lst->size + 1) return -1;
+    Node* node = malloc(sizeof(Node));
+    if (!node) return -1;
+    node->data = value;
     if (pos == 1) {
-        new_node->next = l->head;
-        l->head = new_node;
+        node->next = lst->head;
+        lst->head = node;
     } else {
-        Node* p = l->head;
-        for (int i = 1; i < pos - 1; i++)
-            p = p->next;
-        new_node->next = p->next;
-        p->next = new_node;
+        Node* prev = get_node(lst, pos - 1);
+        node->next = prev->next;
+        prev->next = node;
     }
-    return 1;
+    lst->size++;
+    return 0;
 }
 
-int remove_at(List* l, int pos) {
-    if (pos < 1 || is_empty(l) || pos > get_size(l)) return 0;
-    Node* temp;
+// Remove node at position and return its data
+int remove_at(List* lst, int pos, int* out) {
+    if (pos < 1 || pos > lst->size) return -1;
+    Node* target;
     if (pos == 1) {
-        temp = l->head;
-        l->head = l->head->next;
+        target = lst->head;
+        lst->head = target->next;
     } else {
-        Node* p = l->head;
-        for (int i = 1; i < pos - 1; i++)
-            p = p->next;
-        temp = p->next;
-        p->next = temp->next;
+        Node* prev = get_node(lst, pos - 1);
+        target = prev->next;
+        prev->next = target->next;
     }
-    free(temp);
-    return 1;
+    *out = target->data;
+    free(target);
+    lst->size--;
+    return 0;
 }
 
-void print(List* l) {
-    Node* p = l->head;
-    while (p) {
-        printf("%d ", p->value);
-        p = p->next;
+// Print list contents in square brackets
+void print_list(List* lst) {
+    Node* cur = lst->head;
+    printf("[ ");
+    while (cur) {
+        printf("%d ", cur->data);
+        cur = cur->next;
     }
-    printf("\n");
+    printf("]\n");
+}
+
+// Free all nodes and the list structure
+void free_list(List* lst) {
+    Node* cur = lst->head;
+    while (cur) {
+        Node* next = cur->next;
+        free(cur);
+        cur = next;
+    }
+    free(lst);
 }
